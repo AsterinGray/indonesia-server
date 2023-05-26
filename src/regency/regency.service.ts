@@ -43,6 +43,18 @@ export class RegencyService {
     );
   }
 
+  async findByProvince(provinceId: number): Promise<ResponseRegencyDto[]> {
+    const regencies: Regency[] = await this.regencyRepository.find({
+      where: { province: { id: provinceId } },
+      relations: ['province'],
+    });
+
+    return regencies.reduce(
+      (acc, regency) => acc.concat(this.responseTransform.regency(regency)),
+      [],
+    );
+  }
+
   async findOne(id: number): Promise<ResponseRegencyDto> {
     return this.responseTransform.regency(await this.isRegencyExist(id));
   }

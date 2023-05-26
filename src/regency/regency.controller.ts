@@ -30,6 +30,11 @@ export class RegencyController {
     return this.regencyService.findOne(+id);
   }
 
+  @Get('province/:id')
+  findByProvince(@Param('id') id: string) {
+    return this.regencyService.findByProvince(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRegencyDto: UpdateRegencyDto) {
     return this.regencyService.update(+id, updateRegencyDto);
