@@ -2,11 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRegencyDto } from './dto/create-regency.dto';
 import { UpdateRegencyDto } from './dto/update-regency.dto';
 import { Regency } from './entities/regency.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Province } from 'src/province/entities/province.entity';
 import { ResponseRegencyDto } from './dto/response-regency.dto';
 import { ResponseTransformer } from 'src/utils/ResponseTransformer';
+import { FindRegencyDto } from './dto/find-regency.dto';
 
 @Injectable()
 export class RegencyService {
@@ -32,9 +33,12 @@ export class RegencyService {
     );
   }
 
-  async findAll(): Promise<ResponseRegencyDto[]> {
+  async findAll({ name }: FindRegencyDto): Promise<ResponseRegencyDto[]> {
+    const where: FindOptionsWhere<Regency> = {};
+    if (name) where.name = Like(`%${name}%`);
     const regencies: Regency[] = await this.regencyRepository.find({
       relations: ['province'],
+      where,
     });
 
     return regencies.reduce(

@@ -2,12 +2,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSubdistrictDto } from './dto/create-subdistrict.dto';
 import { UpdateSubdistrictDto } from './dto/update-subdistrict.dto';
 import { Subdistrict } from './entities/subdistrict.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Province } from 'src/province/entities/province.entity';
 import { Regency } from 'src/regency/entities/regency.entity';
 import { ResponseSubdistrictDto } from './dto/response-subdistrict.dto';
 import { ResponseTransformer } from 'src/utils/ResponseTransformer';
+import { FindSubdistrictDto } from './dto/find-subdistrict.dto';
 
 @Injectable()
 export class SubdistrictService {
@@ -38,7 +39,11 @@ export class SubdistrictService {
     );
   }
 
-  async findAll(): Promise<ResponseSubdistrictDto[]> {
+  async findAll({
+    name,
+  }: FindSubdistrictDto): Promise<ResponseSubdistrictDto[]> {
+    const where: FindOptionsWhere<Subdistrict> = {};
+    if (name) where.name = Like(`%${name}%`);
     const subdistricts: Subdistrict[] = await this.subdistrictRepository.find({
       relations: ['province', 'regency'],
     });

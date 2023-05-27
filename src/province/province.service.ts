@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository, FindOptionsWhere } from 'typeorm';
 
 import { CreateProvinceDto } from './dto/create-province.dto';
 import { UpdateProvinceDto } from './dto/update-province.dto';
 import { Province } from './entities/province.entity';
 import { ResponseProvinceDto } from './dto/response-province.dto';
+import { FindProvinceDto } from './dto/find-province.dto';
 
 @Injectable()
 export class ProvinceService {
@@ -18,8 +19,10 @@ export class ProvinceService {
     return this.provinceRepository.save(data);
   }
 
-  findAll(): Promise<ResponseProvinceDto[]> {
-    return this.provinceRepository.find();
+  findAll({ name }: FindProvinceDto): Promise<ResponseProvinceDto[]> {
+    const where: FindOptionsWhere<Province> = {};
+    if (name) where.name = Like(`%${name}%`);
+    else return this.provinceRepository.find({ where });
   }
 
   async findOne(id: number): Promise<ResponseProvinceDto> {

@@ -12,6 +12,7 @@ import {
 import { ProvinceService } from './province.service';
 import { CreateProvinceDto } from './dto/create-province.dto';
 import { UpdateProvinceDto } from './dto/update-province.dto';
+import { FindProvinceDto } from './dto/find-province.dto';
 
 @Controller('province')
 export class ProvinceController {
@@ -23,8 +24,8 @@ export class ProvinceController {
   }
 
   @Get()
-  findAll() {
-    return this.provinceService.findAll();
+  findAll(@Body() findProvinceDto: FindProvinceDto) {
+    return this.provinceService.findAll(findProvinceDto);
   }
 
   @Get(':id')
